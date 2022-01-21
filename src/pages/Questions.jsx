@@ -61,23 +61,27 @@ const Questions = () => {
 		);
 	}
 
-	const handleOnclickAnswer = (e) => {
+	const handleOnclickAnswer = e => {
 		const questions = response.results[questionIndex];
 		if (e.target.textContent === questions.correct_answer) {
-			dispatch(changeScoreAC(score+1))
+			dispatch(changeScoreAC(score + 1));
 		}
 
 		if (questionIndex + 1 < response.results.length) {
 			setQuestionIndex(questionIndex + 1);
 		} else {
-		navigate('/score')
+			navigate('/score');
 		}
 	};
 
 	return (
 		<Box>
-			<Typography variant='h5' fontWeight='bold'>Question {questionIndex + 1}</Typography>
-			<Typography mt={5}>{decode(response.results[questionIndex].question)}</Typography>
+			<Typography variant='h5' fontWeight='bold'>
+				Question {questionIndex + 1}
+			</Typography>
+			<Typography mt={5}>
+				{decode(response.results[questionIndex].question)}
+			</Typography>
 			{answers.map((answer, index) => (
 				<Box mt={2} key={index}>
 					<Button variant='contained' fullWidth onClick={handleOnclickAnswer}>
@@ -85,7 +89,11 @@ const Questions = () => {
 					</Button>
 				</Box>
 			))}
-			<Box mt={5}><Typography  fontWeight='bold'>Score: {score} / {response.results.length}</Typography></Box>
+			<Box mt={5}>
+				<Typography fontWeight='bold'>
+					Score: {score} / {response.results.length}
+				</Typography>
+			</Box>
 		</Box>
 	);
 };

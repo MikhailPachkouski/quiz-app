@@ -14,13 +14,14 @@ const InputField = () => {
 
 	return (
 		<Box mt={3}>
-			<FormControl fullWidth>
+			<FormControl fullWidth style={{textAlign: 'center'}}>
 				<TextField
 					variant='outlined'
 					label='Number of Questions'
 					onChange={handleChange}
 					type='number'
 					size='small'
+					inputProps={{style: {textAlign: 'center'}}}
 				/>
 			</FormControl>
 		</Box>
