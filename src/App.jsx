@@ -1,4 +1,4 @@
-import { Container, Typography } from '@mui/material';
+import { Container } from '@mui/material';
 import { Box } from '@mui/system';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import FinalPage from './pages/FinalPage';
@@ -8,7 +8,8 @@ import StartPage from './pages/StartPage';
 function App() {
 	return (
 		<Router>
-    <Container maxWidth='sm' >
+
+    <Container maxWidth='sm'>
     <Box textAlign='center' mt={5}>
 		
 			<Routes>

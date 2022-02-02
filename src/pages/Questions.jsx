@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useAxios from '../hooks/useAxios';
-import { changeScoreAC } from '../redux/actions';
+import { changeNumberAC, changeScoreAC } from '../redux/actions';
+import './Questions.css';
 
 const Questions = () => {
 	const {
@@ -18,6 +19,7 @@ const Questions = () => {
 
 	const [questionIndex, setQuestionIndex] = useState(0);
 	const [answers, setAnswers] = useState([]);
+	const [selected, setSelected] = useState();
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -40,12 +42,13 @@ const Questions = () => {
 
 	const { response, loading } = useAxios({ url: apiUrl });
 
+	const questions = response?.results[questionIndex];
+
 	useEffect(() => {
 		if (response?.results.length) {
-			const questions = response.results[questionIndex];
 			const allAnswers = [...questions.incorrect_answers];
 			allAnswers.splice(
-				getRandomNumber(questions.length),
+				getRandomNumber(allAnswers.length+1),
 				0,
 				questions.correct_answer
 			);
@@ -61,17 +64,49 @@ const Questions = () => {
 		);
 	}
 
-	const handleOnclickAnswer = e => {
-		const questions = response.results[questionIndex];
-		if (e.target.textContent === questions.correct_answer) {
+	const handleOnclickAnswer = el => {
+		setSelected(el);
+		if (el === questions.correct_answer) {
 			dispatch(changeScoreAC(score + 1));
 		}
+	};
 
-		if (questionIndex + 1 < response.results.length) {
+	const handleQuit = () => {
+		navigate('/');
+		setQuestionIndex(0);
+		setAnswers([]);
+		dispatch(changeScoreAC(0))
+		dispatch(changeNumberAC(5))
+	};
+
+	const handleNext = () => {
+		if (selected && questionIndex + 1 < response.results.length) {
 			setQuestionIndex(questionIndex + 1);
-		} else {
+			setSelected()
+		} else if (!selected) {
+			// alert('Select an answer')
+		return
+		}
+			else {
 			navigate('/score');
 		}
+	};
+
+	const handleColor = answer => {
+		if (
+			selected === answer &&
+			selected === response.results[questionIndex].correct_answer
+		) {
+			return 'success';
+		} else if (
+			selected === answer &&
+			selected !== response.results[questionIndex].correct_answer
+		) {
+			return 'error';
+		} else if (answer === response.results[questionIndex].correct_answer) {
+			return 'success';
+		} else return 'info'
+		
 	};
 
 	return (
@@ -79,21 +114,47 @@ const Questions = () => {
 			<Typography variant='h5' fontWeight='bold'>
 				Question {questionIndex + 1}
 			</Typography>
-			<Typography mt={5}>
-				{decode(response.results[questionIndex].question)}
-			</Typography>
-			{answers.map((answer, index) => (
-				<Box mt={2} key={index}>
-					<Button variant='contained' fullWidth onClick={handleOnclickAnswer}>
-						{decode(answer)}
-					</Button>
-				</Box>
-			))}
-			<Box mt={5}>
+			<Box mt={3}>
 				<Typography fontWeight='bold'>
 					Score: {score} / {response.results.length}
 				</Typography>
 			</Box>
+			<Typography mt={3}>
+				{decode(response.results[questionIndex].question)}
+			</Typography>
+			{answers.map((answer, index) => (
+				<Box mt={2} key={index}>
+					<Button
+						id='ok'
+						variant='contained'
+						fullWidth
+						onClick={() => handleOnclickAnswer(answer)}
+						color={`${selected ? handleColor(answer) : 'primary'}`}
+					>
+						{decode(answer)}
+					</Button>
+				</Box>
+			))}
+			<div className='controlButtons'>
+				<Button
+					onClick={handleQuit}
+					color='secondary'
+					variant='contained'
+					style={{ width: 170 }}
+				>
+					Quit
+				</Button>
+				<Button
+					onClick={handleNext}
+					color='warning'
+					variant='contained'
+					style={{ width: 170 }}
+				>
+					{questionIndex + 1 < response.results.length
+						? 'Next question'
+						: 'Submit'}
+				</Button>
+			</div>
 		</Box>
 	);
 };

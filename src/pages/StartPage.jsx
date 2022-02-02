@@ -40,6 +40,8 @@ const StartPage = () => {
 
 	const handleSubmit = e => {
 		e.preventDefault();
+		document.getElementById('q12').setAttribute('color', 'success')
+
 		navigate('questions');
 	};
 
@@ -54,7 +56,7 @@ const StartPage = () => {
 				<SelectField options={typeOptions} label={'Type'} />
 				<InputField />
 				<Box mt={3}>
-					<Button fullWidth variant='contained' type='submit'>
+					<Button fullWidth variant='contained' type='submit' id='q12'>
 						Get Started
 					</Button>
 				</Box>
